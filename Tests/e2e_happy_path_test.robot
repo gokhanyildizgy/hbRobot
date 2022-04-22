@@ -3,6 +3,7 @@ Documentation                                       HB Case Study
 Library                                             Collections
 Library                                             Selenium2Library
 Library                                             String
+Suite Teardown                                      Quit Browser
 
 *** Variables ***
 ${url}              https://www.hepsiburada.com/
@@ -10,22 +11,24 @@ ${browser}          chrome
 
 *** Test Cases ***
 Test Case 1
+    Given Open Browser and Setup
+    When Search                     bluetooth kulaklık
+    Then Filter Search - By Brand    JBL
+    And Filter Search - By Price (Min - Max)    500    1500
+    And Filter Search - By Color    Siyah
+    And Click first product from search page
+    And Product Page - Add product to basket
+    And Check Basket Page
+
+*** Keywords ***
+Open Browser and Setup
     # Disable notifications
     ${options}=    Evaluate  sys.modules['selenium.webdriver.chrome.options'].Options()    sys
     Call Method     ${options}    add_argument    --disable-notifications
     # Start driver with chrome browser, hepsiburada as base url and given options above
     open browser               ${url}    ${browser}    options=${options}
     maximize browser window
-    Search                     bluetooth kulaklık
-    Filter Search - By Brand    JBL
-    Filter Search - By Price (Min - Max)    500    1500
-    Filter Search - By Color    Siyah
-    Click first product from search page
-    Product Page - Add product to basket
-    Check Basket Page
-    Quit Browser
 
-*** Keywords ***
 Search
     [Arguments]  ${keyword}
     input text  xpath=//input[@type='text']    ${keyword}
